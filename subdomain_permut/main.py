@@ -94,8 +94,8 @@ def memory_load_test(args) -> int:
     available_gb = available_bytes / (1024 ** 3)
     target_gb = target_memory / (1024 ** 3)
     
-    print(f'[i] Available Memory   : {available_gb}')
-    print(f'[i] Expected Usage     : {target_gb}')
+    print(f'[i] Available Memory   : {round(available_gb, 2)} GB')
+    print(f'[i] Expected Usage     : {round(target_gb, 2)} GB')
 
     # create sample array, and get the array size
     sample_array = []
