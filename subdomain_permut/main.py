@@ -2,6 +2,7 @@ import argparse
 import sys
 import psutil
 import gc
+from tqdm import tqdm
 
 # globals
 global global_keywords, global_args
@@ -57,7 +58,7 @@ def permut_sub_sub(args, keywords) -> None:
 
     with open(args.output, 'a') as file:
         # sub.domain
-        for keyword in keywords:
+        for keyword in tqdm(keywords, desc="[*] Initial permutation"):
             file.write(f"{keyword}.{args.domain}\n")
     
     if args.level == 1:
@@ -77,7 +78,7 @@ def permut_sub_sub(args, keywords) -> None:
             gc.collect()
         existing_subdomains = open(args.output, 'r').readlines()
         # loop through existing ones and add sub in front of them
-        for subdomain in existing_subdomains:
+        for subdomain in tqdm(existing_subdomains, desc=f'[*] Level {_+2}'):
             for keyword in keywords:
                 buffer_array.append(f"{keyword}.{subdomain}")
                 if len(buffer_array) == max_arr_length:
