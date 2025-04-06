@@ -2,7 +2,7 @@
 Subdomain permutation tool
 
 ## this vs [alterx](https://github.com/projectdiscovery/alterx)
-Alterx is good, but manually generating permutations file is kinda lazy. Moreover, when working with large files, alterx doesn't write anything for *days*(it has happened to me). So, I am releasing this simple tool for subdomain permutation
+Alterx is good, but manually generating permutations file is kinda tedious. Moreover, when working with large files, alterx doesn't write anything for *days*(it has happened to me). So, I am releasing this simple tool for subdomain permutation
 
 ## Usage
 You can simply run this command, and it will do most of the thigs automatically
