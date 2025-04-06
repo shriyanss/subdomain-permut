@@ -5,6 +5,16 @@ global global_keywords, global_args
 global_keywords = []
 global_args = None
 
+def dedupe_file(file):
+    with open(file, 'r') as f:
+        lines = f.readlines()
+
+    unique_lines = sorted(set(line.strip() for line in lines if line.strip()))
+
+    with open(file, 'w') as f:
+        for line in unique_lines:
+            f.write(f"{line}\n")
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Subdomain permutation tool")
     parser.add_argument('--list', '-l', required=True, help='Subdomains list')
@@ -33,7 +43,7 @@ def get_keywords(args) -> list:
             all_keywords = all_keywords + local_keywords
     return list(set(all_keywords))
 
-def permut_sub_sub(keywords) -> None:
+def permut_sub_sub(args, keywords) -> None:
     """
     generate a permutation for subdomain with subdomain
     """
@@ -41,13 +51,21 @@ def permut_sub_sub(keywords) -> None:
         print('[*] Generating sub-sub permutation')
 
     with open(args.output, 'a') as file:
-        if args.level == 1:
-            # sub.domain
+        # sub.domain
+        for keyword in keywords:
+            file.write(f"{keyword}.{args.domain}\n")
+    
+    if args.level == 1:
+        return
+        
+    # dedupe file
+    dedupe_file(args.output)
+    for _ in range(args.level-1):
+        existing_subdomains = open(args.output, 'r').readlines()
+        # loop through existing ones and add sub in front of them
+        for subdomain in existing_subdomains:
             for keyword in keywords:
-                file.write(f"{keyword}.{args.domain}\n")
-        else:
-            print(f'[e] Invalid level: {args.level}')
-            exit(1)
+                open(args.output, 'a').write(f"{keyword}.{subdomain}")
 
 if __name__ == "__main__":
 
@@ -62,4 +80,4 @@ if __name__ == "__main__":
     keywords = get_keywords(args)
 
     # permut subdomains
-    permut_sub_sub(keywords)
+    permut_sub_sub(args, keywords)
