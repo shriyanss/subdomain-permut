@@ -21,6 +21,7 @@ def parse_args():
     parser.add_argument('--domain', '-d', required=True, help="Domain name for the target")
     parser.add_argument('--level', type=int, default=2, help="Number of iterations to run through (default=2)")
     parser.add_argument('--output', '-o', default='permut.txt', help='Output file name (default=permut.txt)')
+    parser.add_argument('--enrich', '-e', help='Enrich using given wordlist')
     parser.add_argument('--verbose', '-v', action='store_true', help="Verbose output")
     args = parser.parse_args()
     return args
@@ -75,9 +76,18 @@ if __name__ == "__main__":
         print(f'[i] Domain       : {args.domain}')
         print(f'[i] Output file  : {args.output}')
         print(f'[i] Level        : {args.level}')
+    
+    open(args.output, 'w').write('')
 
     # get keywords from subdomains file
     keywords = get_keywords(args)
+
+    if args.enrich:
+        with open(args.enrich, 'r') as file:
+            for line in file:
+                line = line.rstrip()
+                if line not in keywords:
+                    keywords.append(line)
 
     # permut subdomains
     permut_sub_sub(args, keywords)
