@@ -68,8 +68,7 @@ def permut_sub_sub(args, keywords) -> None:
             for keyword in keywords:
                 open(args.output, 'a').write(f"{keyword}.{subdomain}")
 
-if __name__ == "__main__":
-
+def main():
     args = parse_args()
 
     if args.verbose:
@@ -78,7 +77,6 @@ if __name__ == "__main__":
         print(f'[i] Level        : {args.level}')
     
     open(args.output, 'w').write('')
-
     # get keywords from subdomains file
     keywords = get_keywords(args)
 
@@ -88,6 +86,9 @@ if __name__ == "__main__":
                 line = line.rstrip()
                 if line not in keywords:
                     keywords.append(line)
-
+                    
     # permut subdomains
     permut_sub_sub(args, keywords)
+
+if __name__ == "__main__":
+    main()

@@ -1,3 +1,6 @@
 permut.txt
 subdomains.txt
 wordlist.txt
+build/*
+dist/*
+subdomain_permut.egg-info/*
