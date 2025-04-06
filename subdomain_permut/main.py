@@ -1,9 +1,13 @@
 import argparse
+import sys
+import psutil
+import gc
 
 # globals
 global global_keywords, global_args
 global_keywords = []
 global_args = None
+global_arr_buffer_size = 0
 
 def dedupe_file(file):
     with open(file, 'r') as f:
@@ -58,23 +62,69 @@ def permut_sub_sub(args, keywords) -> None:
     
     if args.level == 1:
         return
+    
+    # max array size for in-memory buffer
+    max_arr_length = memory_load_test(args)
         
     # dedupe file
     dedupe_file(args.output)
+    buffer_array = []
     for _ in range(args.level-1):
+        if len(buffer_array) != 0:
+            for sub in buffer_array:
+                open(args.output, 'a').write(sub)
         existing_subdomains = open(args.output, 'r').readlines()
         # loop through existing ones and add sub in front of them
         for subdomain in existing_subdomains:
             for keyword in keywords:
-                open(args.output, 'a').write(f"{keyword}.{subdomain}")
+                buffer_array.append(f"{keyword}.{subdomain}")
+                if len(buffer_array) == max_arr_length:
+                    for sub in buffer_array:
+                        open(args.output, 'a').write(sub)
+    
+    if len(buffer_array) != 0:
+        for sub in buffer_array:
+            open(args.output, 'a').write(sub)
+
+def memory_load_test(args) -> int:
+    """Perform load test on memory to find out how much can be stored in buffer"""
+    # first get the available RAM of the system
+    available_bytes = psutil.virtual_memory().available
+    target_memory = int(available_bytes * 0.9)
+    available_gb = available_bytes / (1024 ** 3)
+    target_gb = target_memory / (1024 ** 3)
+    
+    print(f'[i] Available Memory   : {available_gb}')
+    print(f'[i] Expected Usage     : {target_gb}')
+
+    # create sample array, and get the array size
+    sample_array = []
+    sample_text = f'mylongsamplesubdomainname.{args.domain}'
+    process = psutil.Process()
+    used_memory = 0
+    while True:
+        sample_array.append(sample_text)
+        used_memory = process.memory_info().rss
+        if used_memory >= target_memory:
+            max_arr_length = len(sample_array)
+            break
+        if len(sample_array) == 10000:
+            # get the size of array
+            arr_size = sys.getsizeof(sample_array) + sum(sys.getsizeof(i) for i in sample_array)
+            # calculate array length
+            max_arr_length = int((target_memory / arr_size)*10000)
+            break
+    del sample_array
+    gc.collect()
+    return max_arr_length
 
 def main():
     args = parse_args()
 
     if args.verbose:
-        print(f'[i] Domain       : {args.domain}')
-        print(f'[i] Output file  : {args.output}')
-        print(f'[i] Level        : {args.level}')
+        print(f'[i] Domain             : {args.domain}')
+        print(f'[i] Output file        : {args.output}')
+        print(f'[i] Level              : {args.level}')
     
     open(args.output, 'w').write('')
     # get keywords from subdomains file
