@@ -73,6 +73,8 @@ def permut_sub_sub(args, keywords) -> None:
         if len(buffer_array) != 0:
             for sub in buffer_array:
                 open(args.output, 'a').write(sub)
+            del buffer_array
+            gc.collect()
         existing_subdomains = open(args.output, 'r').readlines()
         # loop through existing ones and add sub in front of them
         for subdomain in existing_subdomains:
@@ -81,10 +83,14 @@ def permut_sub_sub(args, keywords) -> None:
                 if len(buffer_array) == max_arr_length:
                     for sub in buffer_array:
                         open(args.output, 'a').write(sub)
+                    del buffer_array
+                    gc.collect()
     
     if len(buffer_array) != 0:
         for sub in buffer_array:
             open(args.output, 'a').write(sub)
+            del buffer_array
+            gc.collect()
 
 def memory_load_test(args) -> int:
     """Perform load test on memory to find out how much can be stored in buffer"""
@@ -94,7 +100,7 @@ def memory_load_test(args) -> int:
     available_gb = available_bytes / (1024 ** 3)
     target_gb = target_memory / (1024 ** 3)
     
-    print(f'[i] Available Memory   : {round(available_gb, 2)} GB')
+    print(f'[i] Available Memory   : {round(available_gb, 2)} GB')print
     print(f'[i] Expected Usage     : {round(target_gb, 2)} GB')
 
     # create sample array, and get the array size
@@ -136,6 +142,9 @@ def main():
                 line = line.rstrip()
                 if line not in keywords:
                     keywords.append(line)
+    
+    if args.level > 3:
+        print(f'[!] Level >3. File size would be huge. Terminate this (ctrl+c) and re-run if unsure about what you\'re doing')
                     
     # permut subdomains
     permut_sub_sub(args, keywords)
