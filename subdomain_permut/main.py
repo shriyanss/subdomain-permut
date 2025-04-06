@@ -71,8 +71,8 @@ def permut_sub_sub(args, keywords) -> None:
     buffer_array = []
     for _ in range(args.level-1):
         if len(buffer_array) != 0:
-            for sub in buffer_array:
-                open(args.output, 'a').write(sub)
+            with open(args.output, 'a') as f:
+                f.writelines(buffer_array)
             del buffer_array
             gc.collect()
         existing_subdomains = open(args.output, 'r').readlines()
@@ -81,16 +81,16 @@ def permut_sub_sub(args, keywords) -> None:
             for keyword in keywords:
                 buffer_array.append(f"{keyword}.{subdomain}")
                 if len(buffer_array) == max_arr_length:
-                    for sub in buffer_array:
-                        open(args.output, 'a').write(sub)
+                    with open(args.output, 'a') as f:
+                        f.writelines(buffer_array)
                     del buffer_array
                     gc.collect()
     
     if len(buffer_array) != 0:
-        for sub in buffer_array:
-            open(args.output, 'a').write(sub)
-            del buffer_array
-            gc.collect()
+        with open(args.output, 'a') as f:
+            f.writelines(buffer_array)
+        del buffer_array
+        gc.collect()
 
 def memory_load_test(args) -> int:
     """Perform load test on memory to find out how much can be stored in buffer"""
