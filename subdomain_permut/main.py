@@ -54,6 +54,11 @@ def count_lines(filepath):
     with open(filepath, 'r') as f:
         return sum(1 for _ in f)
 
+def append_file(source, target):
+    with open(source, 'r') as src, open(target, 'a') as tgt:
+        for line in src:
+            tgt.write(line)
+
 def permut_sub_sub(args, keywords) -> None:
     """
     generate a permutation for subdomain with subdomain
@@ -90,9 +95,9 @@ def permut_sub_sub(args, keywords) -> None:
             gc.collect()
             buffer_array = []
         # read through previous level permut and add subs
-        line_count = count_lines(args.output)
+        # line_count = count_lines(args.output)
         with open(args.output, 'r') as existing_file:
-            for subdomain in tqdm(existing_file, desc=f'[*] Level {_+2}', total=line_count):
+            for subdomain in tqdm(existing_file, desc=f'[*] Level {_+2}'):
                 subdomain = subdomain.rstrip()
                 for keyword in keywords:
                     buffer_array.append(f"{keyword}.{subdomain}\n")
@@ -112,23 +117,7 @@ def permut_sub_sub(args, keywords) -> None:
             buffer_array = []
         
         # write contents of temporary file into main file
-        temp_arr = []
-        with open(f'.{args.output}', 'r') as file1:
-            for output_line in tqdm(file1, desc=f'[*] Writing level {_+2}', total=count_lines(f'.{args.output}')):
-                if len(temp_arr) < max_arr_length: # store in temp array
-                    temp_arr.append(output_line.rstrip())
-                else:
-                    with open(args.output, 'a') as file2: # flush the temp array, then store in it
-                        file2.writelines(temp_arr)
-                        del temp_arr
-                        gc.collect()
-                        temp_arr = [output_line.rstrip()]
-        
-        # flush temp array
-        if len(temp_arr) != 0:
-            with open(args.output, 'a') as file:
-                file.writelines(temp_arr)
-                del temp_arr
+        append_file(f'.{args.output}', args.output)
 
         # remove temporary file
         os.remove(f'.{args.output}')
@@ -197,7 +186,7 @@ def main():
     if args.level > 3:
         print(f'[!] Level >3. File size would be huge. Terminate this (ctrl+c) and re-run if unsure about what you\'re doing')
                     
-    # permut subdomains
+    # permut subdomains by sub.sub method
     permut_sub_sub(args, keywords)
 
 if __name__ == "__main__":
