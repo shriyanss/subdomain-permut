@@ -76,6 +76,7 @@ def permut_sub_sub(args, keywords) -> None:
                 f.writelines(buffer_array)
             del buffer_array
             gc.collect()
+            buffer_array = []
         existing_subdomains = open(args.output, 'r').readlines()
         # loop through existing ones and add sub in front of them
         for subdomain in tqdm(existing_subdomains, desc=f'[*] Level {_+2}'):
@@ -86,12 +87,14 @@ def permut_sub_sub(args, keywords) -> None:
                         f.writelines(buffer_array)
                     del buffer_array
                     gc.collect()
+                    buffer_array = []
     
     if len(buffer_array) != 0:
         with open(args.output, 'a') as f:
             f.writelines(buffer_array)
         del buffer_array
         gc.collect()
+        buffer_array = []
 
 def memory_load_test(args) -> int:
     """Perform load test on memory to find out how much can be stored in buffer"""

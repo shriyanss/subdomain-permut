@@ -11,7 +11,7 @@ Just run this command, and this tool will be installed:
 pip install subdomain-permut
 ```
 
-### By cloing the repo
+### By cloning the repo
 ```bash
 git clone https://github.com/shriyanss/subdomain-permut.git
 cd subdomain-permut
