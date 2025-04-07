@@ -4,14 +4,28 @@ Subdomain permutation tool
 ## this vs [alterx](https://github.com/projectdiscovery/alterx)
 Alterx is good, but manually generating permutations file is kinda tedious. Moreover, when working with large files, alterx doesn't write anything for *days*(it has happened to me). So, I am releasing this simple tool for subdomain permutation
 
+## Installation
+### Using `pip`
+Just run this command, and this tool will be installed:
+```bash
+pip install subdomain-permut
+```
+
+### By cloing the repo
+```bash
+git clone https://github.com/shriyanss/subdomain-permut.git
+cd subdomain-permut
+sudo python3 setup.py install
+```
+
 ## Usage
 You can simply run this command, and it will do most of the thigs automatically
 ```bash
-python3 main.py -l subdomains.txt -d site.com
+subdomain-permut -l subdomains.txt -d site.com
 ```
 
 ```
-usage: main.py [-h] --list LIST --domain DOMAIN [--level LEVEL] [--output OUTPUT] [--enrich ENRICH] [--verbose]
+usage: subdomain-permut [-h] --list LIST --domain DOMAIN [--level LEVEL] [--output OUTPUT] [--enrich ENRICH] [--verbose]
 
 Subdomain permutation tool
 

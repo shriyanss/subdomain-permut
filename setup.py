@@ -15,7 +15,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/shriyanss/subdomain-permut',
     packages=find_packages(),
-    install_requires=['argparse'],
+    install_requires=['psutil', 'tqdm'],
     entry_points={
         'console_scripts': [
             'subdomain-permut=subdomain_permut.main:main',
