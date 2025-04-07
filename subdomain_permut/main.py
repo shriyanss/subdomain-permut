@@ -3,6 +3,7 @@ import sys
 import psutil
 import gc
 from tqdm import tqdm
+import os
 
 # globals
 global global_keywords, global_args
@@ -49,6 +50,10 @@ def get_keywords(args) -> list:
             all_keywords = all_keywords + local_keywords
     return list(set(all_keywords))
 
+def count_lines(filepath):
+    with open(filepath, 'r') as f:
+        return sum(1 for _ in f)
+
 def permut_sub_sub(args, keywords) -> None:
     """
     generate a permutation for subdomain with subdomain
@@ -69,38 +74,80 @@ def permut_sub_sub(args, keywords) -> None:
         
     # dedupe file
     dedupe_file(args.output)
+
+    # generate next levels of permutation
     buffer_array = []
     for _ in range(args.level-1):
+        if args.verbose:
+            print(f'[*] Starting level {_+2}')
+        # empty buffer array if any exist
+        if len(buffer_array) != 0:
+            if args.verbose:
+                print(f'[*] Clearing buffer from previous iteration')
+            with open(args.output, 'a') as f:
+                f.writelines(buffer_array)
+            del buffer_array
+            gc.collect()
+            buffer_array = []
+        # read through previous level permut and add subs
+        line_count = count_lines(args.output)
+        with open(args.output, 'r') as existing_file:
+            for subdomain in tqdm(existing_file, desc=f'[*] Level {_+2}', total=line_count):
+                subdomain = subdomain.rstrip()
+                for keyword in keywords:
+                    buffer_array.append(f"{keyword}.{subdomain}\n")
+                    if len(buffer_array) > max_arr_length:
+                        with open(f'.{args.output}', 'a') as f: # write to temp file instead of main file
+                            f.writelines(buffer_array)
+                        del buffer_array
+                        gc.collect()
+                        buffer_array = []
+        
+        # flush buffer array
+        if len(buffer_array) != 0:
+            with open(f'.{args.output}', 'a') as f:
+                f.writelines(buffer_array)
+            del buffer_array
+            gc.collect()
+            buffer_array = []
+        
+        # write contents of temporary file into main file
+        temp_arr = []
+        with open(f'.{args.output}', 'r') as file1:
+            for output_line in tqdm(file1, desc=f'[*] Writing level {_+2}', total=count_lines(f'.{args.output}')):
+                if len(temp_arr) < max_arr_length: # store in temp array
+                    temp_arr.append(output_line.rstrip())
+                else:
+                    with open(args.output, 'a') as file2: # flush the temp array, then store in it
+                        file2.writelines(temp_arr)
+                        del temp_arr
+                        gc.collect()
+                        temp_arr = [output_line.rstrip()]
+        
+        # flush temp array
+        if len(temp_arr) != 0:
+            with open(args.output, 'a') as file:
+                file.writelines(temp_arr)
+                del temp_arr
+
+        # remove temporary file
+        os.remove(f'.{args.output}')
+    
+        # flush buffer array
         if len(buffer_array) != 0:
             with open(args.output, 'a') as f:
                 f.writelines(buffer_array)
             del buffer_array
             gc.collect()
             buffer_array = []
-        existing_subdomains = open(args.output, 'r').readlines()
-        # loop through existing ones and add sub in front of them
-        for subdomain in tqdm(existing_subdomains, desc=f'[*] Level {_+2}'):
-            for keyword in keywords:
-                buffer_array.append(f"{keyword}.{subdomain}")
-                if len(buffer_array) == max_arr_length:
-                    with open(args.output, 'a') as f:
-                        f.writelines(buffer_array)
-                    del buffer_array
-                    gc.collect()
-                    buffer_array = []
-    
-    if len(buffer_array) != 0:
-        with open(args.output, 'a') as f:
-            f.writelines(buffer_array)
-        del buffer_array
-        gc.collect()
-        buffer_array = []
+        if args.verbose:
+            print(f'[*] All temporary resources freed by level {_+2}')
 
 def memory_load_test(args) -> int:
     """Perform load test on memory to find out how much can be stored in buffer"""
     # first get the available RAM of the system
     available_bytes = psutil.virtual_memory().available
-    target_memory = int(available_bytes * 0.9)
+    target_memory = int(available_bytes * 0.8)
     available_gb = available_bytes / (1024 ** 3)
     target_gb = target_memory / (1024 ** 3)
     
