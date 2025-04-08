@@ -1,4 +1,6 @@
 import psutil
+import sys
+import gc
 
 def dedupe_file(file):
     with open(file, 'r') as f:

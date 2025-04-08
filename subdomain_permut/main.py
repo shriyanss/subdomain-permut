@@ -43,6 +43,7 @@ def main():
 
     if args.ls:
         print("""Available methods:
+- all       : Run all available methods
 - subdotsub : Generate {sub}.{sub} combinations
 - subsub    : Generate {sub}{sub} combinations""")
         return
@@ -75,10 +76,15 @@ def main():
     # see which permutation methods are to be done
     methods = args.method.replace(' ', '').split(',')
 
+    if 'all' in methods:
+        SimplePermut.permut_sub_dot_sub(args, keywords) # {sub}.{sub} method
+        SimplePermut.permut_sub_sub(args, keywords) # {sub}{sub} method
+        return
     if 'subdotsub' in methods:
-        # permut subdomains by sub.sub method
+        # permut subdomains by {sub}.{sub} method
         SimplePermut.permut_sub_dot_sub(args, keywords)
     if 'subsub' in methods:
+        # permut subdomains by {sub}{sub} method
         SimplePermut.permut_sub_sub(args, keywords)
 
 if __name__ == "__main__":
