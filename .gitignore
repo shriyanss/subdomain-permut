@@ -4,3 +4,4 @@ wordlist.txt
 build/*
 dist/*
 subdomain_permut.egg-info/*
+.DS_Store
