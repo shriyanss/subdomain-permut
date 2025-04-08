@@ -9,8 +9,8 @@
 </p>
 
 <p align='center'>
-  <img src="assets/logo.png" width="150">
-  <img src="assets/screenshot.png">
+  <img src="https://raw.githubusercontent.com/shriyanss/subdomain-permut/refs/heads/main/assets/logo.png" width="150">
+  <img src="https://raw.githubusercontent.com/shriyanss/subdomain-permut/refs/heads/main/assets/screenshot.png">
 </p>
 
 # About
