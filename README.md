@@ -38,7 +38,7 @@ subdomain-permut -l subdomains.txt -d site.com
 ```
 
 ```
-usage: subdomain-permut [-h] --list LIST --domain DOMAIN [--level LEVEL] [--output OUTPUT] [--enrich ENRICH] [--verbose]
+usage: subdomain-permut [-h] [--list LIST] [--domain DOMAIN] [--level LEVEL] [--output OUTPUT] [--enrich ENRICH] [--method METHOD] [--ls] [--verbose]
 
 Subdomain permutation tool
 
@@ -52,5 +52,8 @@ optional arguments:
                         Output file name (default=permut.txt)
   --enrich ENRICH, -e ENRICH
                         Enrich using given wordlist
+  --method METHOD, -m METHOD
+                        Subdomain Permutation methods to use (comma-separated). Run with --ls flag to see the list (default=subdotsub)
+  --ls                  List permutation methods
   --verbose, -v         Verbose output
   ```
