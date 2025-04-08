@@ -1,10 +1,10 @@
 <p align="center">
-  <img alt="PyPI - License" src="https://img.shields.io/pypi/l/subdomain-permut">
-  <img alt="PyPI - Version" src="https://img.shields.io/pypi/v/subdomain-permut">
-  <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/shriyanss/subdomain-permut/publish.yml">
+  <a href="https://pypi.org/project/subdomain-permut" target="_blank"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/subdomain-permut"></a>
+  <a href="https://pypi.org/project/subdomain-permut/#history" target="_blank"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/subdomain-permut"></a>
+  <a href="https://github.com/shriyanss/subdomain-permut/actions/workflows/publish.yml"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/shriyanss/subdomain-permut/publish.yml"></a>
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/shriyanss/subdomain-permut">
-  <img alt="Reddit User Karma" src="https://img.shields.io/reddit/user-karma/combined/shriyanss">
-  <img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/ss0x00">
+  <a href="https://reddit.com/u/shriyanss" target="_blank"><img alt="Reddit User Karma" src="https://img.shields.io/reddit/user-karma/combined/shriyanss"></a>
+  <img src="https://x.com/ss0x00" target="_blank"><img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/ss0x00"></a>
 </p>
 
 <p align='center'>
