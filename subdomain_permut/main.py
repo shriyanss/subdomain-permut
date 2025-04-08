@@ -43,9 +43,10 @@ def main():
 
     if args.ls:
         print("""Available methods:
-- all       : Run all available methods
-- subdotsub : Generate {sub}.{sub} combinations
-- subsub    : Generate {sub}{sub} combinations""")
+- all            : Run all available methods
+- subdotsub      : Generate {sub}.{sub} combinations
+- subsub         : Generate {sub}{sub} combinations
+- subhyphensub   : Generate {sub}-{sub} combination""")
         return
     
     # check if all required options are there or not
@@ -79,6 +80,7 @@ def main():
     if 'all' in methods:
         SimplePermut.permut_sub_dot_sub(args, keywords) # {sub}.{sub} method
         SimplePermut.permut_sub_sub(args, keywords) # {sub}{sub} method
+        SimplePermut.permut_sub_hyphen_sub(args, keywords) # {sub}-{sub} method
         return
     if 'subdotsub' in methods:
         # permut subdomains by {sub}.{sub} method
@@ -86,6 +88,9 @@ def main():
     if 'subsub' in methods:
         # permut subdomains by {sub}{sub} method
         SimplePermut.permut_sub_sub(args, keywords)
+    if 'subhyphensub' in methods:
+        # permut subdomains by {sub}-{sub} method
+        SimplePermut.permut_sub_hyphen_sub(args, keywords)
 
 if __name__ == "__main__":
     main()
