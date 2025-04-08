@@ -23,11 +23,13 @@ def dedupe_file(file):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Subdomain permutation tool")
-    parser.add_argument('--list', '-l', required=True, help='Subdomains list')
-    parser.add_argument('--domain', '-d', required=True, help="Domain name for the target")
+    parser.add_argument('--list', '-l', help='Subdomains list')
+    parser.add_argument('--domain', '-d', help="Domain name for the target")
     parser.add_argument('--level', type=int, default=2, help="Number of iterations to run through (default=2)")
     parser.add_argument('--output', '-o', default='permut.txt', help='Output file name (default=permut.txt)')
     parser.add_argument('--enrich', '-e', help='Enrich using given wordlist')
+    parser.add_argument('--method', '-m', default='subdotsub', help='Subdomain Permutation methods to use (comma-separated). Run with --ls flag to see the list (default=subdotsub)')
+    parser.add_argument('--ls', action='store_true', help='List permutation methods')
     parser.add_argument('--verbose', '-v', action='store_true', help="Verbose output")
     args = parser.parse_args()
     return args
@@ -59,12 +61,12 @@ def append_file(source, target):
         for line in src:
             tgt.write(line)
 
-def permut_sub_sub(args, keywords) -> None:
+def permut_sub_dot_sub(args, keywords) -> None:
     """
-    generate a permutation for subdomain with subdomain
+    generate permutations for {sub}.{sub} method
     """
     if args.verbose:
-        print('[*] Generating sub-sub permutation')
+        print('[*] Generating {sub}.{sub} permutations')
 
     with open(args.output, 'a') as file:
         # sub.domain
@@ -95,7 +97,6 @@ def permut_sub_sub(args, keywords) -> None:
             gc.collect()
             buffer_array = []
         # read through previous level permut and add subs
-        # line_count = count_lines(args.output)
         with open(args.output, 'r') as existing_file:
             for subdomain in tqdm(existing_file, desc=f'[*] Level {_+2}'):
                 subdomain = subdomain.rstrip()
@@ -132,6 +133,85 @@ def permut_sub_sub(args, keywords) -> None:
         if args.verbose:
             print(f'[*] All temporary resources freed by level {_+2}')
 
+def permut_sub_sub(args, keywords):
+    """
+    generate permutations for {sub}{sub} method
+    """
+    if args.verbose:
+        print('[*] Generating {sub}{sub} permutations')
+    
+    with open(args.output, 'a') as file:
+        # subsub.domain
+        for keyword1 in tqdm(keywords, desc="[*] Initial permutation"):
+            for keyword2 in keywords:
+                file.write(f"{keyword1}{keyword2}.{args.domain}\n")
+    
+    if args.level == 1:
+        return
+    
+    # max array size for in-memory buffer
+    max_arr_length = memory_load_test(args)
+
+    # dedupe file
+    dedupe_file(args.output)
+
+    # generate next levels of permutation
+    buffer_array = []
+    for _ in range(args.level-1):
+        if args.verbose:
+            print(f'[*] Starting level {_+2}')
+        
+        # empty buffer array if any exist
+        if len(buffer_array) != 0:
+            if args.verbose:
+                print(f'[*] Clearing buffer from previous iteration')
+            with open(args.output, 'a') as f:
+                f.writelines(buffer_array)
+            del buffer_array
+            gc.collect()
+            buffer_array = []
+        
+        # read through previous level permut and add subs
+        with open(args.output, 'r') as existing_file:
+            for subdomain in tqdm(existing_file, desc=f'[*] Level {_+2}'):
+                subdomain = subdomain.rstrip()
+                for keyword1 in keywords:
+                    keyword1 = keyword1.rstrip()
+                    for keyword2 in keywords:
+                        keyword2 = keyword2.rstrip()
+                        buffer_array.append(f"{keyword1}{keyword2}.{subdomain}\n")
+                        buffer_array.append(f"{keyword1}.{subdomain}\n")
+                        if len(buffer_array) > max_arr_length:
+                            with open(f'.{args.output}', 'a') as f: # write to temp file instead of main file
+                                f.writelines(buffer_array)
+                            del buffer_array
+                            gc.collect()
+                            buffer_array = []
+        
+        # flush buffer array
+        if len(buffer_array) != 0:
+            with open(f'.{args.output}', 'a') as f:
+                f.writelines(buffer_array)
+            del buffer_array
+            gc.collect()
+            buffer_array = []
+        
+        # write contents of temporary file into main file
+        append_file(f'.{args.output}', args.output)
+
+        # remove temporary file
+        os.remove(f'.{args.output}')
+    
+        # flush buffer array
+        if len(buffer_array) != 0:
+            with open(args.output, 'a') as f:
+                f.writelines(buffer_array)
+            del buffer_array
+            gc.collect()
+            buffer_array = []
+        if args.verbose:
+            print(f'[*] All temporary resources freed by level {_+2}')
+            
 def memory_load_test(args) -> int:
     """Perform load test on memory to find out how much can be stored in buffer"""
     # first get the available RAM of the system
@@ -167,11 +247,23 @@ def memory_load_test(args) -> int:
 def main():
     args = parse_args()
 
+    if args.ls:
+        print("""Available methods:-
+        - subdotsub : Generate {sub}.{sub} combinations
+        - subsub    : Generate {sub}{sub} combinations""")
+        return
+    
+    # check if all required options are there or not
+    if args.domain == None or args.list == None:
+        print('[!] --domain/-d and --list/-l flags are required for permutation')
+        exit(1)
+
     if args.verbose:
         print(f'[i] Domain             : {args.domain}')
         print(f'[i] Output file        : {args.output}')
         print(f'[i] Level              : {args.level}')
     
+    # empty the file
     open(args.output, 'w').write('')
     # get keywords from subdomains file
     keywords = get_keywords(args)
@@ -183,11 +275,17 @@ def main():
                 if line not in keywords:
                     keywords.append(line)
     
-    if args.level > 3:
-        print(f'[!] Level >3. File size would be huge. Terminate this (ctrl+c) and re-run if unsure about what you\'re doing')
-                    
-    # permut subdomains by sub.sub method
-    permut_sub_sub(args, keywords)
+    if args.level > 2:
+        print(f'[!] Level >2. File size would be huge. Terminate this (ctrl+c) and re-run if unsure about what you\'re doing')
+    
+    # see which permutation methods are to be done
+    methods = args.method.replace(' ', '').split(',')
+
+    if 'subdotsub' in methods:
+        # permut subdomains by sub.sub method
+        permut_sub_dot_sub(args, keywords)
+    if 'subsub' in methods:
+        permut_sub_sub(args, keywords)
 
 if __name__ == "__main__":
     main()
