@@ -43,10 +43,11 @@ def main():
 
     if args.ls:
         print("""Available methods:
-- all            : Run all available methods
-- subdotsub      : Generate {sub}.{sub} combinations
-- subsub         : Generate {sub}{sub} combinations
-- subhyphensub   : Generate {sub}-{sub} combination""")
+- all                : Run all available methods
+- subdotsub          : Generate {sub}.{sub} combinations
+- subsub             : Generate {sub}{sub} combinations
+- subhyphensub       : Generate {sub}-{sub} combinations
+- subunderscoresub   : Generate {sub}_{sub} combinations""")
         return
     
     # check if all required options are there or not
@@ -91,6 +92,9 @@ def main():
     if 'subhyphensub' in methods:
         # permut subdomains by {sub}-{sub} method
         SimplePermut.permut_sub_hyphen_sub(args, keywords)
+    if "subunderscoresub" in methods:
+        # permut subdomains by {sub}-{sub} method
+        SimplePermut.permut_sub_underscore_sub(args, keywords)
 
 if __name__ == "__main__":
     main()
