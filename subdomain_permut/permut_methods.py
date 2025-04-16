@@ -180,6 +180,9 @@ class SimplePermut:
             for keyword1 in tqdm(keywords, desc="[*] Initial permutation"):
                 for keyword2 in keywords:
                     file.write(f"{keyword1}-{keyword2}.{args.domain}\n")
+                    if args.level == 3:
+                        for keyword3 in keywords:
+                            file.write(f"{keyword1}-{keyword2}-{keyword3}.{args.domain}\n")
         
         if args.level == 1:
             return
@@ -213,6 +216,9 @@ class SimplePermut:
                     for keyword1 in keywords:
                         for keyword2 in keywords:
                             buffer_array.append(f"{keyword1}-{keyword2}.{subdomain}\n")
+                            if args.level == 3:
+                                for keyword3 in keywords:
+                                    buffer_array.append(f"{keyword1}-{keyword2}-{keyword3}.{subdomain}\n")
                             if len(buffer_array) > max_arr_length:
                                 with open(f'.{args.output}', 'a') as f: # write to temp file instead of main file
                                     f.writelines(buffer_array)
@@ -272,6 +278,9 @@ class SimplePermut:
             for keyword1 in tqdm(keywords, desc="[*] Initial permutation"):
                 for keyword2 in keywords:
                     file.write(f"{keyword1}_{keyword2}.{args.domain}\n")
+                    if args.level == 3:
+                        for keyword3 in keywords:
+                            file.write(f"{keyword1}_{keyword2}_{keyword3}.{args.domain}\n")
         
         if args.level == 1:
             return
@@ -306,6 +315,9 @@ class SimplePermut:
                     for keyword1 in keywords:
                         for keyword2 in keywords:
                             buffer_array.append(f"{keyword1}_{keyword2}.{subdomain}\n")
+                            if args.level == 3:
+                                for keyword3 in keywords:
+                                    buffer_array.append(f"{keyword1}-{keyword2}-{keyword3}.{subdomain}\n")
                             if len(buffer_array) > max_arr_length:
                                 with open(f'.{args.output}', 'a') as f: # write to temp file instead of main file
                                     f.writelines(buffer_array)

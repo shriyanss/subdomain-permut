@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument('--method', '-m', default='subdotsub', help='Subdomain Permutation methods to use (comma-separated). Run with --ls flag to see the list (default=subdotsub)')
     parser.add_argument('--ls', action='store_true', help='List permutation methods')
     parser.add_argument('--verbose', '-v', action='store_true', help="Verbose output")
+    parser.add_argument('--yes', '-y', action='store_true', help="Skip all confirmations shown (if any)")
     args = parser.parse_args()
     return args
 
@@ -74,7 +75,31 @@ def main():
     
     if args.level > 2:
         print(f'[!] Level >2. File size would be huge. Terminate this (ctrl+c) and re-run if unsure about what you\'re doing')
-    
+        while True:
+            if args.yes == True:
+                break
+            input('[?] Are you sure want to continue [y/n]: ')
+            if input == 'n':
+                exit(0)
+            if input == 'y':
+                break
+            else:
+                print("[!] Please enter either 'y' or 'n'")
+                pass
+    if args.level > 3:
+        print(f'[!] Level >3. Some features are unavailable above level 3. Moreover, the file sizes could be of several terabytes')
+        while True:
+            if args.yes == True:
+                break
+            input('[?] Are you sure want to continue [y/n]: ')
+            if input == 'n':
+                exit(0)
+            if input == 'y':
+                break
+            else:
+                print("[!] Please enter either 'y' or 'n'")
+                pass
+
     # see which permutation methods are to be done
     methods = args.method.replace(' ', '').split(',')
 
