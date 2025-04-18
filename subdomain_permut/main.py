@@ -1,5 +1,6 @@
 import argparse
 from subdomain_permut.permut_methods import SimplePermut
+from subdomain_permut.keywords import SimpleGet
 
 # globals
 global global_keywords, global_args
@@ -21,23 +22,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def get_keywords(args) -> list:
-    """
-    generate a list of keywords
-    """
-    all_keywords = []
-    with open(args.list, 'r') as file:
-        for line in file:
-            line = line.rstrip()
-            local_keywords = line.split('.')
-
-            # also split on hyphens
-            for keyword in local_keywords:
-                if '-' in keyword:
-                    hyphen_keywords = keyword.split('-')
-                    local_keywords = local_keywords + hyphen_keywords
-            all_keywords = all_keywords + local_keywords
-    return list(set(all_keywords))
 
 def main():
     args = parse_args()
@@ -64,7 +48,7 @@ def main():
     # empty the file
     open(args.output, 'w').write('')
     # get keywords from subdomains file
-    keywords = get_keywords(args)
+    keywords = SimpleGet.get_keywords(args)
 
     if args.enrich:
         with open(args.enrich, 'r') as file:
