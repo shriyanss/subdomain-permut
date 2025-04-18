@@ -78,10 +78,10 @@ def main():
         while True:
             if args.yes == True:
                 break
-            input('[?] Are you sure want to continue [y/n]: ')
-            if input == 'n':
+            user_ans = input('[?] Are you sure want to continue [y/n]: ').strip()
+            if user_ans == 'n':
                 exit(0)
-            if input == 'y':
+            if user_ans == 'y':
                 break
             else:
                 print("[!] Please enter either 'y' or 'n'")
@@ -91,10 +91,10 @@ def main():
         while True:
             if args.yes == True:
                 break
-            input('[?] Are you sure want to continue [y/n]: ')
-            if input == 'n':
+            user_ans = input('[?] Are you sure want to continue [y/n]: ').strip()
+            if user_ans == 'n':
                 exit(0)
-            if input == 'y':
+            if user_ans == 'y':
                 break
             else:
                 print("[!] Please enter either 'y' or 'n'")
