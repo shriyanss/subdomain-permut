@@ -1,6 +1,7 @@
 import argparse
 from subdomain_permut.permut_methods import SimplePermut
 from subdomain_permut.keywords import SimpleGet
+from subdomain_permut import __version__
 
 # globals
 global global_keywords, global_args
@@ -19,12 +20,18 @@ def parse_args():
     parser.add_argument('--ls', action='store_true', help='List permutation methods')
     parser.add_argument('--verbose', '-v', action='store_true', help="Verbose output")
     parser.add_argument('--yes', '-y', action='store_true', help="Skip all confirmations shown (if any)")
+    parser.add_argument('--version', action='store_true', help='Print version information and exit')
     args = parser.parse_args()
     return args
 
 
 def main():
     args = parse_args()
+
+    # print version information
+    if args.version:
+        print(f'Subdomain Permutation Tool v{__version__.__version__}')
+        return
 
     if args.ls:
         print("""Available methods:
